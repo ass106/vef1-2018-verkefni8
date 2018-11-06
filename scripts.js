@@ -27,13 +27,15 @@ const text = (() => {
   
   function init(_form, _items) {
     items = _items;
-    const itemList = items.querySelectorAll('.item');
     
       for (let item of items.querySelectorAll('.item__checkbox')) {
         item.addEventListener('click', finish);
       } 
-      for (let item of items.querySelectorAll('.item')) {
+      for (let item of items.querySelectorAll('.item__text')) {
         item.addEventListener('click', edit);
+      }
+      for (let item of items.querySelectorAll('.item__button')) {
+        item.addEventListener('click', deleteItem);
       }
 
     _form.addEventListener('submit', formHandler);
@@ -51,6 +53,12 @@ const text = (() => {
     for (let item of items.querySelectorAll('.item__checkbox')) {
       item.addEventListener('click', finish);
     }
+    for (let item of items.querySelectorAll('.item__text')) {
+      item.addEventListener('click', edit);
+    }
+    for (let item of items.querySelectorAll('.item__button')) {
+      item.addEventListener('click', deleteItem);
+    }
 
     console.log('halló heimur');
   }
@@ -67,12 +75,50 @@ const text = (() => {
   
   // event handler fyrir það að breyta færslu
   function edit(e) {
+
+    var value = e.target.innerText;
+    var elephant = e.target.parentElement;
     
-    value.change()
+    
+    var newForm = document.createElement("form");
+    newForm.className = "item__edit";
+    
+    var change = document.createElement("input");
+    change.type = "text";
+    change.className = "text__input";
+    change.style = 'widht: 100%';
+    change.value = value;
+    
+    e.target.remove();
+
+    newForm.appendChild(change);
+    elephant.appendChild(newForm);
+    elephant.insertBefore(newForm, elephant.childNodes[2]);
+
+    newForm.addEventListener('submit', commit);
+
+    console.log('Changes started');
   }
   
   // event handler fyrir það að klára að breyta færslu
   function commit(e) {
+    e.preventDefault();
+    elephant = e.target.parentElement;
+    var newSpan = document.createElement('span');
+    newSpan.className = "item__text";
+
+    var value = document.querySelector('.text__input').value;
+
+    newSpan.appendChild(document.createTextNode(value));
+    
+    e.target.remove();
+    elephant.appendChild(newSpan);
+    elephant.insertBefore(newSpan, elephant.childNodes[2]);
+    newSpan.addEventListener('click', edit);
+
+    console.log(value);
+
+    console.log('Committed');
   }
   
   // fall sem sér um að bæta við nýju item
@@ -107,6 +153,7 @@ const text = (() => {
   
   // event handler til að eyða færslu
   function deleteItem(e) {
+    e.target.parentElement.remove();
   }
 
   // hjálparfall til að útbúa element
