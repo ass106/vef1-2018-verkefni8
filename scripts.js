@@ -7,20 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
   text.init(form, items);  
 });
 
-/*
-var para = document.createElement("p");
-var node = document.createTextNode("This is new.");
-para.appendChild(node);
-
-var divtest = document.createElement('div');
-divtest.appendChild(para);
-
-
-var elephant = document.querySelector('.form');
-elephant.appendChild(divtest);
-console.log("feitt");
-*/
-
 const text = (() => {
   let items;
   
@@ -28,31 +14,9 @@ const text = (() => {
   function init(_form, _items) {
     items = _items;
     
-      for (let item of items.querySelectorAll('.item__checkbox')) {
-        item.addEventListener('click', finish);
-      } 
-      for (let item of items.querySelectorAll('.item__text')) {
-        item.addEventListener('click', edit);
-      }
-      for (let item of items.querySelectorAll('.item__button')) {
-        item.addEventListener('click', deleteItem);
-      }
-
-    _form.addEventListener('submit', formHandler);
-    
-
-    // TODO láta hluti í _items virka
-  }
-
-  function formHandler(e) {
-    e.preventDefault();
-
-
-    add(document.querySelector('.form__input').value);
-  
     for (let item of items.querySelectorAll('.item__checkbox')) {
       item.addEventListener('click', finish);
-    }
+    } 
     for (let item of items.querySelectorAll('.item__text')) {
       item.addEventListener('click', edit);
     }
@@ -60,6 +24,35 @@ const text = (() => {
       item.addEventListener('click', deleteItem);
     }
 
+    _form.addEventListener('submit', formHandler);
+    
+
+    // TODO láta hluti í _items virka
+  }
+  function isNullOrEmpty(str){
+    return !str||!str.trim();
+  }
+
+  function formHandler(e) {
+    e.preventDefault();
+    var input = document.querySelector('.form__input').value;
+    
+    if (isNullOrEmpty(input)) {
+      return;
+    }
+    
+    add();
+    for (let item of items.querySelectorAll('.item__checkbox')) {
+      item.addEventListener('click', finish);
+    } 
+    for (let item of items.querySelectorAll('.item__text')) {
+      item.addEventListener('click', edit);
+    }
+    for (let item of items.querySelectorAll('.item__button')) {
+      item.addEventListener('click', deleteItem);
+    }
+    
+    e.target.reset();
     console.log('halló heimur');
   }
   
@@ -86,14 +79,12 @@ const text = (() => {
     var change = document.createElement("input");
     change.type = "text";
     change.className = "text__input";
-    change.style = 'widht: 100%';
-    change.value = value;
-    
-    e.target.remove();
 
+    change.value = value;
+
+    
     newForm.appendChild(change);
-    elephant.appendChild(newForm);
-    elephant.insertBefore(newForm, elephant.childNodes[2]);
+    e.target.replaceWith(newForm);
 
     newForm.addEventListener('submit', commit);
 
@@ -104,16 +95,14 @@ const text = (() => {
   function commit(e) {
     e.preventDefault();
     elephant = e.target.parentElement;
-    var newSpan = document.createElement('span');
+    let newSpan = document.createElement('span');
     newSpan.className = "item__text";
 
-    var value = document.querySelector('.text__input').value;
+    let value = document.querySelector('.text__input').value;
 
     newSpan.appendChild(document.createTextNode(value));
     
-    e.target.remove();
-    elephant.appendChild(newSpan);
-    elephant.insertBefore(newSpan, elephant.childNodes[2]);
+    e.target.replaceWith(newSpan);
     newSpan.addEventListener('click', edit);
 
     console.log(value);
@@ -124,25 +113,25 @@ const text = (() => {
   // fall sem sér um að bæta við nýju item
   function add(value) {
     
-    var input = value;
+    let input = document.querySelector('.form__input').value;
     
-    var li = document.createElement("li");
+    let li = document.createElement("li");
     li.className = "item";
     
-    var content = document.createElement("input");
-    content.type = "checkbox";
-    content.className = "item__checkbox";
+    let box = document.createElement("input");
+    box.type = "checkbox";
+    box.className = "item__checkbox";
     
-    var span = document.createElement("span");
+    let span = document.createElement("span");
     
     span.className = "item__text";
     span.appendChild(document.createTextNode(input));
     
-    var button = document.createElement("button");
+    let button = document.createElement("button");
     button.appendChild(document.createTextNode("Eyða"));
     button.className = "item__button";
     
-    li.appendChild(content);
+    li.appendChild(box);
     li.appendChild(span);
     li.appendChild(button);
     
@@ -158,6 +147,7 @@ const text = (() => {
 
   // hjálparfall til að útbúa element
   function el(type, className, clickHandler) {
+    
   }
 
   return {
